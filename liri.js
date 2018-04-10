@@ -91,12 +91,18 @@ function spotifySearch() {
         var queryURL = "http://www.omdbapi.com/?t="+ movieTitle +"&y=&plot=short&apikey=trilogy";
         request(queryURL, function(err, response, body){
             if (!err && response.statusCode === 200) {
-                console.log(queryURL);
-                console.log(movieTitle);
-                console.log(JSON.parse(body));
+                //console.log(queryURL);
+                //console.log(movieTitle);
+                //console.log(JSON.parse(body));
                 console.log(
                     "Title: " + JSON.parse(body).Title +
-                    "/nYear: " + JSON.parse(body).Year
+                    "\nYear: " + JSON.parse(body).Year +
+                    "\nIMDB Rating: " + JSON.parse(body).Ratings[0].Value +
+                    "\nRotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value +
+                    "\nCountry: " + JSON.parse(body).Country +
+                    "\nLanguage: " + JSON.parse(body).Language +
+                    "\nPlot: " + JSON.parse(body).Plot +
+                    "\nActors: " + JSON.parse(body).Actors
                 )
             }
             else {
