@@ -110,6 +110,20 @@ function spotifySearch() {
             }
         });
     }
+
+    function doThisPlease() {
+        fs.readFile("random.txt", "utf8", function(err, data) {
+           if (err) {
+            return console.log(err);
+          }
+          else {
+            var dataSplit = data.split(","); 
+            songTitle = dataSplit[1];
+            argv.push(songTitle);
+            spotifySearch();
+          }
+        });
+      }
     
 
 
@@ -135,6 +149,6 @@ if (command === "movie-this") {
 }
 
 //call to .txt file
-//if (command === "do-what-it-says") {
-  //  doThis();
-//}
+if (command === "do-what-it-says") {
+   doThisPlease();
+}
