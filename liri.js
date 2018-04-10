@@ -1,12 +1,12 @@
-
-
 require("dotenv").config();
 
 var keys = require("./keys.js");
+var request = require("request");
+var fs = require("fs");
 var Spotify = require("node-spotify-api");
 var Twitter = require("twitter");
-var songTitle = ""
-var movieTitle = ""
+var songTitle = "";
+var movieTitle = "";
 
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
@@ -19,7 +19,7 @@ var command = process.argv[2];
 
 var argv = process.argv;
 
-//function for displaying our last 20 tweets, pulled from twitter api
+//function for twitter
 var params = {screen_name: 'codingpadawan1', count: 20};
 
 function getTweets(){
@@ -53,16 +53,61 @@ function spotifySearch() {
             }
         }
     }
-    spotify.search({ type: 'track', query: songTitle }, function(err, data) {
-        if (err) {
-          return console.log('Error occurred: ' + err);
+    spotify.search({ 
+        type: 'track', 
+        query: songTitle 
+        }).then(function(response) {
+          
+                console.log("Artist: " + JSON.stringify(response.tracks.items[0].album.artists[0].name, null, 2) +
+                  "\nSong Name: " + JSON.stringify(response.tracks.items[0].name, null, 2) +
+                  "\nPreview Link: " + JSON.stringify(response.tracks.items[0].album.artists[0].external_urls.spotify, null, 2) +
+                  "\nAlbum: " + JSON.stringify(response.tracks.items[0].album.name, null, 2));
+              })
+              .catch(function(err){
+                  console.log(err);
+              });
+          
+    }
+
+    //function for request to OMDB API 
+
+
+
+//console.log(queryURL);
+
+    function movieSearch() {
+        
+       if (argv[3] === undefined){
+            movieTitle = "Mr Nobody";
+        } else {
+            for (var i = 3; i < argv.length; i++) {
+                if (i === argv.length - 1) {
+                    movieTitle += argv[i];
+                } else {
+                    movieTitle += argv[i] + " ";
+                }
+            }
         }
-       
-      console.log(data); 
-      });
-}
+        var queryURL = "http://www.omdbapi.com/?t="+ movieTitle +"&y=&plot=short&apikey=trilogy";
+        request(queryURL, function(err, response, body){
+            if (!err && response.statusCode === 200) {
+                console.log(queryURL);
+                console.log(movieTitle);
+                console.log(JSON.parse(body));
+                console.log(
+                    "Title: " + JSON.parse(body).Title +
+                    "/nYear: " + JSON.parse(body).Year
+                )
+            }
+            else {
+                console.log(err);
+            }
+        });
+    }
+    
 
 
+  
 
 
 
@@ -77,3 +122,13 @@ if (command === "spotify-this-song") {
     spotifySearch();
    
 }
+
+//call to OMDB API
+if (command === "movie-this") {
+    movieSearch();
+}
+
+//call to .txt file
+//if (command === "do-what-it-says") {
+  //  doThis();
+//}
